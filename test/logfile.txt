@@ -1,0 +1,7 @@
+This file is created after sucessful push of git file
+first I created PAT for new git branch
+then I went to the directory
+then made a clone of repo
+after clo0ne move into cloned directory 
+set global username and email
+then set remote url -->"git remote set-url origin https://<<giPAT>>@github.com/shriramhalyal2000/DockerRepo"

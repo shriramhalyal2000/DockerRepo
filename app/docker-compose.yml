@@ -1,0 +1,55 @@
+# Use version 3.8 of the Docker Compose file format
+version: '3.8'
+
+# Define the services (containers) that make up your application
+services:
+  # --- Backend Service ---
+  backend:
+    # Build the image using the Dockerfile located in the 'NoteBook_BackEnd' directory
+    build: ./NoteBook_BackEnd
+    # Map port 5000 on the host to port 5000 in the container.
+    ports:
+      - "5000:5000"
+    # Define environment variables for the backend.
+    environment:
+      # IMPORTANT:
+      # If you are using the MongoDB service defined below, use:
+      # MONGO_URI: "mongodb://mongodb:27017/inotebook"
+      #
+      # If you are using an external MongoDB (e.g., MongoDB Atlas), replace with your actual connection string:
+      # MONGO_URI: "mongodb+srv://<username>:<password>@<cluster-url>/<database-name>?retryWrites=true&w=majority"
+      MONGO_URI: "mongodb://mongodb:27017/inotebook" # Defaulting to the internal Docker MongoDB
+      JWT_SECRET: "supersecretjwtkey_replace_me_with_a_strong_one" # IMPORTANT: Replace with a strong, random secret key
+    # volumes: # Uncomment and configure if needed for development
+    #   - ./NoteBook_BackEnd:/usr/src/app
+    #   - /usr/src/app/node_modules
+    depends_on:
+      - mongodb # Ensures MongoDB starts before the backend
+
+  # --- Frontend Service ---
+  frontend:
+    # Build the image using the Dockerfile located in the 'NoteBook_FrontEnd' directory
+    build: ./NoteBook_FrontEnd
+    # Map port 80 on the host to port 80 in the container (Nginx).
+    ports:
+      - "80:80"
+    # No environment variables needed here for a static Nginx frontend.
+
+  # --- Optional: MongoDB Service (if you want to run MongoDB in Docker) ---
+  # Uncomment this block if you want Docker Compose to also run your MongoDB database.
+  # If you use this, remember to update the MONGO_URI in the backend service to:
+  # mongodb://mongodb:27017/inotebook
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017" # Expose MongoDB port to host (optional, for direct access)
+    volumes:
+      - mongodb_data:/data/db # Persist MongoDB data
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+# Define named volumes for data persistence (e.g., for MongoDB)
+# Uncomment this if you uncommented the mongodb service above
+volumes:
+  mongodb_data:

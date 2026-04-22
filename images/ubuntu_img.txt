@@ -1,0 +1,2 @@
+pulled a new ubuntu images from web and 
+stored in this directory
